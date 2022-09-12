@@ -16,6 +16,8 @@ using Otus.Teaching.Pcf.Administration.DataAccess.Data;
 using Otus.Teaching.Pcf.Administration.DataAccess.Repositories;
 using Otus.Teaching.Pcf.Administration.Core.Domain.Administration;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
+using Otus.Teaching.Pcf.Administration.DataAccess.Settings;
+using Microsoft.Extensions.Options;
 
 namespace Otus.Teaching.Pcf.Administration.WebHost
 {
@@ -34,15 +36,20 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
         {
             services.AddControllers().AddMvcOptions(x=> 
                 x.SuppressAsyncSuffixInActionNames = false);
-            services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-            services.AddScoped<IDbInitializer, EfDbInitializer>();
-            services.AddDbContext<DataContext>(x =>
-            {
-                //x.UseSqlite("Filename=PromocodeFactoryAdministrationDb.sqlite");
-                x.UseNpgsql(Configuration.GetConnectionString("PromocodeFactoryAdministrationDb"));
-                x.UseSnakeCaseNamingConvention();
-                x.UseLazyLoadingProxies();
-            });
+            services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDbSettings")); // получаем конфигурацию подлкючения к MongoDb
+            services.AddSingleton<IMongoSettings>(serviceProvider =>
+                serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value); // DI для MongoDb
+            services.AddScoped(typeof(IRepository<>), typeof(MongoRepository<>));
+
+            //services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+            //services.AddScoped<IDbInitializer, EfDbInitializer>();
+            //services.AddDbContext<DataContext>(x =>
+            //{
+            //    //x.UseSqlite("Filename=PromocodeFactoryAdministrationDb.sqlite");
+            //    x.UseNpgsql(Configuration.GetConnectionString("PromocodeFactoryAdministrationDb"));
+            //    x.UseSnakeCaseNamingConvention();
+            //    x.UseLazyLoadingProxies();
+            //});
 
             services.AddOpenApiDocument(options =>
             {
@@ -52,7 +59,9 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDbInitializer dbInitializer)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env
+           // , IDbInitializer dbInitializer
+            )
         {
             if (env.IsDevelopment())
             {
@@ -78,7 +87,7 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
                 endpoints.MapControllers();
             });
             
-            dbInitializer.InitializeDb();
+            //dbInitializer.InitializeDb();
         }
     }
 }
