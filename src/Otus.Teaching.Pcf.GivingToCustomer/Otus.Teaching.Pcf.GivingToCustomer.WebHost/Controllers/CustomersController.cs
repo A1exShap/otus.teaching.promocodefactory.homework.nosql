@@ -15,14 +15,13 @@ namespace Otus.Teaching.Pcf.GivingToCustomer.WebHost.Controllers
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class CustomersController
-        : ControllerBase
+    public class CustomersController : ControllerBase
     {
-        private readonly IRepository<Customer> _customerRepository;
-        private readonly IRepository<Preference> _preferenceRepository;
+        private readonly GivingToCustomerMongoService<Customer> _customerRepository;
+        private readonly GivingToCustomerMongoService<Preference> _preferenceRepository;
 
-        public CustomersController(IRepository<Customer> customerRepository, 
-            IRepository<Preference> preferenceRepository)
+        public CustomersController(GivingToCustomerMongoService<Customer> customerRepository,
+            GivingToCustomerMongoService<Preference> preferenceRepository)
         {
             _customerRepository = customerRepository;
             _preferenceRepository = preferenceRepository;
