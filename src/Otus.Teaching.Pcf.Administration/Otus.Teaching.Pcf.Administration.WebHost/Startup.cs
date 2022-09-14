@@ -39,7 +39,7 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
 
             services.AddSingleton<IAdministrationMongoDatabaseSettings>(sp => sp.GetRequiredService<IOptions<AdministrationMongoDatabaseSettings>>().Value);
 
-            services.AddSingleton(typeof(PromocodesMongoService<>));
+            services.AddSingleton(typeof(AdministrationMongoService<>));
 
             services.AddScoped<IDbInitializer, MongoDbInitializer>();
 

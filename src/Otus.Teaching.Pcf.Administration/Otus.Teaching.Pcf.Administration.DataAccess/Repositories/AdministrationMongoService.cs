@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace Otus.Teaching.Pcf.Administration.DataAccess.Repositories
 {
-    public class PromocodesMongoService<T> : IRepository<T> where T : BaseEntity
+    public class AdministrationMongoService<T> : IRepository<T> where T : BaseEntity
     {
         private readonly IMongoCollection<T> _entities;
 
-        public PromocodesMongoService(IAdministrationMongoDatabaseSettings settings)
+        public AdministrationMongoService(IAdministrationMongoDatabaseSettings settings)
         {
             string collectionName = null;
 
