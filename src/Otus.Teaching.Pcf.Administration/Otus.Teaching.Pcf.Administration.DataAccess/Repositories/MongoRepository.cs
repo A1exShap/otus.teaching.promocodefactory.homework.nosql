@@ -22,7 +22,7 @@ namespace Otus.Teaching.Pcf.Administration.DataAccess.Repositories
             _collection = database.GetCollection<T>(name);
         }
 
-        private protected string GetCollectionName(Type documentType)
+        public static  string GetCollectionName(Type documentType)
         {
             return ((BsonCollectionAttribute)documentType.GetCustomAttributes(
                     typeof(BsonCollectionAttribute),

@@ -39,10 +39,8 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
             services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDbSettings")); // получаем конфигурацию подлкючения к MongoDb
             services.AddSingleton<IMongoSettings>(serviceProvider =>
                 serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value); // DI для MongoDb
-            services.AddScoped(typeof(IRepository<>), typeof(MongoRepository<>));
-
-            //services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-            //services.AddScoped<IDbInitializer, EfDbInitializer>();
+            services.AddScoped(typeof(IRepository<>), typeof(MongoRepository<>));            
+            services.AddScoped<IDbInitializer, MongoDbInitializer>();
             //services.AddDbContext<DataContext>(x =>
             //{
             //    //x.UseSqlite("Filename=PromocodeFactoryAdministrationDb.sqlite");
@@ -59,8 +57,8 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env
-           // , IDbInitializer dbInitializer
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, 
+            IDbInitializer dbInitializer
             )
         {
             if (env.IsDevelopment())
@@ -87,7 +85,7 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
                 endpoints.MapControllers();
             });
             
-            //dbInitializer.InitializeDb();
+            dbInitializer.InitializeDb();
         }
     }
 }
