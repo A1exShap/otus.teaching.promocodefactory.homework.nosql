@@ -10,6 +10,7 @@ namespace Otus.Teaching.Pcf.Administration.DataAccess.Data
         public EfDbInitializer(DataContext dataContext)
         {
             _dataContext = dataContext;
+            
         }
         
         public void InitializeDb()

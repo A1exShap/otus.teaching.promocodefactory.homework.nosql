@@ -34,26 +34,9 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddMvcOptions(x=> 
-                x.SuppressAsyncSuffixInActionNames = false);
-            services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDbSettings")); // получаем конфигурацию подлкючения к MongoDb
-            services.AddSingleton<IMongoSettings>(serviceProvider =>
-                serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value); // DI для MongoDb
-            services.AddScoped(typeof(IRepository<>), typeof(MongoRepository<>));            
-            services.AddScoped<IDbInitializer, MongoDbInitializer>();
-            //services.AddDbContext<DataContext>(x =>
-            //{
-            //    //x.UseSqlite("Filename=PromocodeFactoryAdministrationDb.sqlite");
-            //    x.UseNpgsql(Configuration.GetConnectionString("PromocodeFactoryAdministrationDb"));
-            //    x.UseSnakeCaseNamingConvention();
-            //    x.UseLazyLoadingProxies();
-            //});
-
-            services.AddOpenApiDocument(options =>
-            {
-                options.Title = "PromoCode Factory Administration API Doc";
-                options.Version = "1.0";
-            });
+            services = ServiceBuilder.GetServiceCollection(services, Configuration);
+           
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
