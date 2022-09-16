@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using Otus.Teaching.Pcf.Administration.Core.Domain.Administration;
 using Otus.Teaching.Pcf.Administration.DataAccess.Repositories;
+using Otus.Teaching.Pcf.Administration.DataAccess.Settings;
+using Otus.Teaching.Pcf.Administration.WebHost;
 using Otus.Teaching.Pcf.Administration.WebHost.Controllers;
 using Xunit;
 
 namespace Otus.Teaching.Pcf.Administration.IntegrationTests.Components.WebHost.Controllers
 {
-    [Collection(EfDatabaseCollection.DbCollection)]
-    public class EmployeesControllerTests: IClassFixture<EfDatabaseFixture>
+    //[Collection(EfDatabaseCollection.DbCollection)]
+    public class EmployeesControllerTests: IClassFixture<MongoDbFixture>
     {
-        private EfRepository<Employee> _employeesRepository;
+        private MongoRepository<Employee> _employeesRepository;
         private EmployeesController _employeesController;
 
-        public EmployeesControllerTests(EfDatabaseFixture efDatabaseFixture)
+        public EmployeesControllerTests(MongoDbFixture mongoDbFixture)
         {
-            _employeesRepository = new EfRepository<Employee>(efDatabaseFixture.DbContext);
+            _employeesRepository = new MongoRepository<Employee>(mongoDbFixture.MongoDbSettings);
             _employeesController = new EmployeesController(_employeesRepository);
         }
 
