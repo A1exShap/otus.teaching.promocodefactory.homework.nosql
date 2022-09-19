@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Otus.Teaching.Pcf.Administration.DataAccess;
+using Otus.Teaching.Pcf.Administration.DataAccess.Repositories;
+using System;
 
 namespace Otus.Teaching.Pcf.Administration.IntegrationTests
 {

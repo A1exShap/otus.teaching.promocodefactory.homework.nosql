@@ -16,6 +16,9 @@ using Otus.Teaching.Pcf.Administration.DataAccess.Data;
 using Otus.Teaching.Pcf.Administration.DataAccess.Repositories;
 using Otus.Teaching.Pcf.Administration.Core.Domain.Administration;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
+using Microsoft.Extensions.Options;
+using Otus.Teaching.Pcf.Administration.DataAccess.Settings;
+using Otus.Teaching.Pcf.Administration.Core.Abstractions.Settings;
 
 namespace Otus.Teaching.Pcf.Administration.WebHost
 {
@@ -27,22 +30,21 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
         {
             Configuration = configuration;
         }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddMvcOptions(x=> 
-                x.SuppressAsyncSuffixInActionNames = false);
-            services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-            services.AddScoped<IDbInitializer, EfDbInitializer>();
-            services.AddDbContext<DataContext>(x =>
-            {
-                //x.UseSqlite("Filename=PromocodeFactoryAdministrationDb.sqlite");
-                x.UseNpgsql(Configuration.GetConnectionString("PromocodeFactoryAdministrationDb"));
-                x.UseSnakeCaseNamingConvention();
-                x.UseLazyLoadingProxies();
-            });
+            services.Configure<AdministrationMongoDatabaseSettings>(Configuration.GetSection(nameof(AdministrationMongoDatabaseSettings)));
+
+            services.AddSingleton<IAdministrationMongoDatabaseSettings>(sp => sp.GetRequiredService<IOptions<AdministrationMongoDatabaseSettings>>().Value);
+
+            services.AddSingleton(typeof(AdministrationMongoService<>));
+
+            services.AddScoped<IDbInitializer, MongoDbInitializer>();
+
+
+            services.AddControllers().AddMvcOptions(x => x.SuppressAsyncSuffixInActionNames = false);
 
             services.AddOpenApiDocument(options =>
             {
@@ -68,7 +70,7 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
             {
                 x.DocExpansion = "list";
             });
-            
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -77,7 +79,7 @@ namespace Otus.Teaching.Pcf.Administration.WebHost
             {
                 endpoints.MapControllers();
             });
-            
+
             dbInitializer.InitializeDb();
         }
     }

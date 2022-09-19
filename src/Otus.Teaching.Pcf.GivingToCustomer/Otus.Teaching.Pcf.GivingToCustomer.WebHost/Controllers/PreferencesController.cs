@@ -14,12 +14,11 @@ namespace Otus.Teaching.Pcf.GivingToCustomer.WebHost.Controllers
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class PreferencesController
-        : ControllerBase
+    public class PreferencesController : ControllerBase
     {
-        private readonly IRepository<Preference> _preferencesRepository;
+        private readonly GivingToCustomerMongoService<Preference> _preferencesRepository;
 
-        public PreferencesController(IRepository<Preference> preferencesRepository)
+        public PreferencesController(GivingToCustomerMongoService<Preference> preferencesRepository)
         {
             _preferencesRepository = preferencesRepository;
         }
