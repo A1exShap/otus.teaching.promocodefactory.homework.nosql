@@ -20,12 +20,15 @@ namespace Otus.Teaching.Pcf.GivingToCustomer.WebHost.Controllers
     {
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<Preference> _preferenceRepository;
+        private readonly IRepository<PromoCode> _promoCodeRepository;
 
         public CustomersController(IRepository<Customer> customerRepository, 
-            IRepository<Preference> preferenceRepository)
+            IRepository<Preference> preferenceRepository,
+            IRepository<PromoCode> promoCodeRepository)
         {
             _customerRepository = customerRepository;
             _preferenceRepository = preferenceRepository;
+            _promoCodeRepository = promoCodeRepository;
         }
         
         /// <summary>
@@ -57,6 +60,8 @@ namespace Otus.Teaching.Pcf.GivingToCustomer.WebHost.Controllers
         public async Task<ActionResult<CustomerResponse>> GetCustomerAsync(Guid id)
         {
             var customer =  await _customerRepository.GetByIdAsync(id);
+
+            await WithNaviProps(customer);
 
             var response = new CustomerResponse(customer);
 
@@ -118,6 +123,26 @@ namespace Otus.Teaching.Pcf.GivingToCustomer.WebHost.Controllers
             await _customerRepository.DeleteAsync(customer);
 
             return NoContent();
+        }
+
+        private async Task<Customer> WithNaviProps(Customer customer)
+        {
+            customer.Preferences ??= new List<CustomerPreference>();
+            customer.PromoCodes ??= new List<PromoCodeCustomer>();
+
+            foreach (var preference in customer.Preferences)
+            {
+                preference.Preference = await _preferenceRepository.GetByIdAsync(preference.PreferenceId);
+                preference.Customer = customer;
+            }
+
+            foreach (var promoCode in customer.PromoCodes)
+            {
+                promoCode.PromoCode = await _promoCodeRepository.GetByIdAsync(promoCode.PromoCodeId);
+                promoCode.Customer = customer;
+            }
+
+            return customer;
         }
     }
 }
