@@ -17,15 +17,18 @@ namespace Otus.Teaching.Pcf.GivingToCustomer.IntegrationTests.Components.WebHost
         private readonly CustomersController _customersController;
         private readonly EfRepository<Customer> _customerRepository;
         private readonly EfRepository<Preference> _preferenceRepository;
-        
+        private readonly EfRepository<PromoCode> _promoCodeRepository;
+
         public CustomersControllerTests(EfDatabaseFixture efDatabaseFixture)
         {
             _customerRepository = new EfRepository<Customer>(efDatabaseFixture.DbContext);
             _preferenceRepository = new EfRepository<Preference>(efDatabaseFixture.DbContext);
-            
+            _promoCodeRepository = new EfRepository<PromoCode>(efDatabaseFixture.DbContext);
+
             _customersController = new CustomersController(
                 _customerRepository, 
-                _preferenceRepository);
+                _preferenceRepository,
+                _promoCodeRepository);
         }
         
         [Fact]
